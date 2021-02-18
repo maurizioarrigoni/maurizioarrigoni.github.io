@@ -1,0 +1,44 @@
+<!DOCTYPE HTML> 
+<html> 
+	<head>
+    <style>
+      /* table {
+        border-collapse: collapse;
+        width: 50%;
+        } */
+    </style>
+  </head> 
+  <body>
+		<table align = "center" id="table" border="1" style="font-family: Consolas,monaco,monospace;width: 100%;"}></table>
+    <!-- <table align = "center" id="table" border="1" style="width: 100%;"}></table> -->
+		<script> 
+			var json_querystring = parseQuery(window.location.search);
+
+      var table = document.getElementById("table");
+      i=0;
+      for (param in json_querystring) {
+          //console.log(param);
+          //console.log(json_querystring[param]);
+          // var x = document.getElementById("table").rows[i].cells;
+          // x[0].innerHTML = param;
+          // x[1].innerHTML = json_querystring[param];
+          var row = table.insertRow(i);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          cell1.innerHTML = param;
+          cell2.innerHTML = json_querystring[param];
+          i++;
+      }
+
+			function parseQuery(queryString) {
+				var query = {};
+				var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+				for (var i = 0; i < pairs.length; i++) {
+					var pair = pairs[i].split('=');
+					query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+				}
+				return query;
+			}
+		</script> 
+	</body> 
+</html> 
