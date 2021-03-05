@@ -10,7 +10,7 @@ var parameters = {
     "scope": "openid",
     "resource": "",
     "state": "1234567890",
-    "redirect_uri": "http://localhost:8080",
+    "redirect_uri": "https://maurizioarrigoni.github.io/auth_code_flow.html",
     "grant_type": "authorization_code",
     "client_secret": "m_2~---9Sinor9HK1Y1g_gbjoS3twgcMaZ",
     "refresh_token_grant_type":"refresh_token"
