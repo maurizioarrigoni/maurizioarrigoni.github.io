@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!-- https://registeredapps.hosting.portal.azure.net/registeredapps/Content/1.0.01514779/Quickstarts/en/JsSpaAuthCodeQuickstartPage.html?clientOptimizations=undefined&l=en.en-us&trustedAuthority=https%3A%2F%2Fportal.azure.com&shellVersion=undefined#678c9dfc06c2401abb4e7e91fdedd95e -->
+<html>
+	<head>
+        <style type="text/css">
+            .table {
+                font-family: Consolas,monaco,monospace;
+                width: 100%;
+                font-size: 80%;
+                table-layout:fixed;
+                word-wrap:break-word;                
+            }
+            .table-head {
+                border: 1px solid black;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+            .table-head td {
+                border: 1px solid black;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <!-- load parameters from external json file -->
+        <script type="text/javascript" src="./auth_code_flow.json"></script>
+        <script>
+            var window_location_href=window.location.href;
+            function getFormData($form){
+                // https://stackoverflow.com/questions/11338774/serialize-form-data-to-json
+                var unindexed_array = $form.serializeArray();
+                var indexed_array = {};
+            
+                $.map(unindexed_array, function(n, i){
+                    indexed_array[n['name']] = n['value'];
+                });
+                return indexed_array;
+            }
+
+            var $form = $("#form1_2");
+            var data = getFormData($form);
+
+            function onLoad() {
+
+                openidconnect_label = document.getElementById("openidconnect_label");
+                openidconnect_label.innerHTML = parameters.openidconnect;
+
+                endpoint = parameters.endpoint;
+
+                form1_1 = document.getElementById("form1_1");
+                form1_1_label.innerHTML = parameters.authorize_endpoint;
+                form1_1_label2.innerHTML = "<b>display_name:</b> ".concat(parameters.display_name);
+                form1_1.action = parameters.authorize_endpoint;
+                form1_1.client_id.value = parameters.client_id;
+                form1_1.response_type.value = parameters.response_type;
+                form1_1.redirect_uri.value = parameters.redirect_uri;
+                form1_1.scope.value = parameters.scope;
+                form1_1.state.value = parameters.state;
+    
+                // load querystring arguments
+                json_querystring = parseQuery(window.location.search);
+                querystring = document.getElementById("querystring");
+                i=0;
+                for (param in json_querystring) {
+                    var row = querystring.insertRow(i);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.width = "15%";
+                    cell1.innerHTML = param;
+                    cell2.innerHTML = json_querystring[param];
+                    i++;
+                }
+    
+                if (window.location.search == "") {
+                    // scroll to first step if querystring is empty
+                    ScrollTo("form1_1_title");
+                } else {
+                    ScrollTo("form1_2_title");
+                }
+    
+                form1_2 = document.getElementById("form1_2");
+                form1_2_label.innerHTML = parameters.token_endpoint;
+                form1_2.action = parameters.token_endpoint;
+                form1_2.client_id.value = parameters.client_id;
+                form1_2.grant_type.value = parameters.grant_type;
+                form1_2.redirect_uri.value = parameters.redirect_uri;
+                form1_2.client_secret.value = parameters.client_secret;
+                form1_2.code.value = json_querystring.code;
+            }
+    
+            function parseQuery(queryString) {
+                var query = {};
+                var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+                for (var i = 0; i < pairs.length; i++) {
+                    var pair = pairs[i].split('=');
+                    query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+                }
+                return query;
+            }
+    
+            //-----------------------------------------------------------------------------
+            // funzioni per lo scrolling HTML
+            // source code: https://stackoverflow.com/questions/3163615/how-to-scroll-html-page-to-given-anchor
+            // source code: https://jsfiddle.net/jd7q25hg/12/
+            //-----------------------------------------------------------------------------
+            function ScrollTo(name) {
+                ScrollToResolver(document.getElementById(name));
+            }
+            function ScrollToResolver(elem) {
+                var jump = parseInt(elem.getBoundingClientRect().top * .2);
+                document.body.scrollTop += jump;
+                document.documentElement.scrollTop += jump;
+                if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+                    elem.lastjump = Math.abs(jump);
+                    setTimeout(function() {
+                    ScrollToResolver(elem);
+                    }, "100");
+                } else {
+                    elem.lastjump = null;
+                }
+            }
+        </script>
+    </head>
+	<body onload="onLoad()">
+		<h2 id="title">### OAUTH2 playground ###</h2>
+        <h2>Microsoft Identity Platform (v2.0)</h2>
+        <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/azure-ad-endpoint-comparison" target="_blank">Microsoft Identity Platform (v2.0) and Azure Active Directory (v1.0) endpoints comparison</a>
+		<br>
+        <b id="openidconnect_label"></b><br>
+		<h3><u>OAUTH 2.0: authorization code grant flow</u></h3>
+		<a href="http://tools.ietf.org/html/rfc6749#section-4.1" target="_blank">http://tools.ietf.org/html/rfc6749#section-4.1</a>
+		
+		<h3 id="form1_1_title">(1.1) Request an authorization code</h3>
+		<b id="form1_1_label"></b><br>
+        <div id="form1_1_label2"></div>
+        <form id="form1_1" action="" method="get">
+			client_id (required): <input type="text" name="client_id" value="" size="35"><br>
+			response_type (required): <input type="text" name="response_type" value=""><br>
+			redirect_uri (required): <input type="text" name="redirect_uri" value="" size="35"><br>
+			scope (optional): <input type="text" name="scope" value="" size="35"><br>
+			state (optional): <input type="text" name="state" value="" size="35"><br>
+			<input type="submit" value="get authorization code">
+        </form><br>
+
+        <h3 id="form1_2_title">(1.2) Use the authorization code to obtain an access token</h3>
+        <table id="querystring" class="table table-head"></table><br>
+        <b id="form1_2_label"></b>
+		<form id="form1_2" action="" target="_blank" method="post">
+            grant_type: <input type="text" name="grant_type" value=""><br>
+            client_id: <input type="text" name="client_id" value="" size="35"><br>
+            client_secret: <input type="text" name="client_secret" value="" size="35"><br>  
+            code: <input id="code" type="text" name="code" value="" size="80"><br>
+            redirect_uri: <input type="text" name="redirect_uri" value="" size="35"><br>
+            <input type="submit" value="get access token (JWT) [in a new browser tab]">
+        </form>
+        <button onclick="window.location.href=window_location_href">reset authorization code</button>
+
+		<h3>(2) Analyze JSON response</h3>
+		<a href="https://jsonformatter.curiousconcept.com/" target="_blank">JSON online formatter</a>
+        
+		<h3>(3) Use jwt.io or jwt.ms to decode access token</h3>
+		To retrieve signing certificate:<a href="https://login.enirgy.it/FederationMetadata/2007-06/FederationMetadata.xml">FederationMetadata</a>
+		
+		<br><br>
+        -----BEGIN CERTIFICATE-----
+        MIIC2jCCAcKgAwIBAgIQExd+NoU5NoZED2YXV70NmTANBgkqhkiG9w0BAQsFADApMScwJQYDVQQDEx5BREZTIFNpZ25pbmcgLSBsb2dpbi5lbmlyZ3kuaXQwHhcNMjAxMDI3MDkzNDMyWhcNMjExMDI3MDkzNDMyWjApMScwJQYDVQQDEx5BREZTIFNpZ25pbmcgLSBsb2dpbi5lbmlyZ3kuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC7PgCNiR+GTOBYDd7a9JQqSM4LkvTSR2nM0+ivPee+JDizurIC8cijG2kpqBngcIs5x6FSMBM5hPf0x05OscrYCQU3xrzQoJi26OhoiyoXopBu9AHru1c/AMMpjFzRrRqfxtmXJ0dcNNAd3vRxx/xizIrTMf44V3IwlZwOMxvXC4YlJLSBLiaLB1gLm9g8QUAPDkcfae5ebJ07gXWHaGVB24/2bK3HDwkbBnkDUUw43sP8C/kIHSp1xo+iZAQtlEED3GBJuHzxQzURxwkcOz1wbKO3dQQAkOkfmtJJFJIqcfM8EOJgE6YB0V0XsslMvP9EtRczqnCvQZmL5fNj7jwTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABabl2RDLrw7zgzmdkWgV+rE2JCr2Pos2rifJPv1o5YcmcjLmrQ+999WXmjsSdApqyJnDwRQj3ZeaI4j1861KNCIZEl4ceivo04RDdaB0/1RJTDJRu39alSN8pvs8CtZ3BLoSKIoDaTHgdCL4Ffb2Qcu7hc5sP6O3W/xO+4pUTFVk5HSCVtTOEZUNKV74BXZO82cw3RgY+nw/qCLYIERmnMp+IW2a43UFnwmhglgV8pjxP0pvk2uiJRIYVQ63jM0nJdtAzf7U3vH3DJtnNj7uMQ17innRfYl0hQc2HWhdqomN3BElEq7KP85RhwwH7wtAkX1+e+jDDOpDN+xTW1waZc=
+        -----END CERTIFICATE-----
+		<br><br>
+		
+		<a href="https://jwt.io" target="_blank">JWT online encode/decode (by Auth0)</a><br>
+		<a href="https://jwt.ms" target="_blank">JWT online encode/decode (by Microsoft)</a>
+    </body>
+</html>
