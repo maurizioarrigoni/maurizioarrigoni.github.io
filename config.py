@@ -7,12 +7,15 @@ other secure storage mechanism.
 # Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
 # See LICENSE in the project root for license information.
 
-CLIENT_ID = 'ENTER_YOUR_CLIENT_ID'
-CLIENT_SECRET = 'ENTER_YOUR_CLIENT_SECRET'
-REDIRECT_URI = 'http://localhost:5000/login/authorized'
+CLIENT_ID = 'd4d2031d-f2c8-484a-9a81-7adf56970cbd'
+CLIENT_SECRET = '~zuQGoc-6-1JA1vE_x_1jsp9-EL8FJ7TgE'
+# REDIRECT_URI = 'http://localhost:5000/login/authorized'
+REDIRECT_URI = 'https://2533e9da4af9.ngrok.io'
+
 
 WEBHOOK_DATA = {'changeType': 'updated',
-                'notificationUrl': 'https://{ ENTER_YOUR_NGROK_URL }/listen',
+                # 'notificationUrl': 'https://{ ENTER_YOUR_NGROK_URL }/listen',
+                'notificationUrl': 'https://2533e9da4af9.ngrok.io/listen',
                 'resource': 'security/alerts',
                 'clientState': 'cLIENTsTATEfORvALIDATION'}
 
